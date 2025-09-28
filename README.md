@@ -34,4 +34,4 @@ cmake ..
 make -j4  # Use 4 parallel jobs
 
 # Run the ray tracer
-./bin/raytracer output.ppm /output.png
+./bin/raytracer
