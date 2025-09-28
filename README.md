@@ -23,7 +23,7 @@ A minimalistic real-time ray tracer implemented in pure C with zero dependencies
 
 ```bash
 # Clone and build
-git clone https://github.com/your-username/mini-raytracer-c.git
+git clone https://github.com/YanfeiWang-daming/mini-raytracer-c.git
 cd mini-raytracer-c
 
 # Configure with CMake
