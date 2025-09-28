@@ -1,0 +1,67 @@
+# CMake最低版本要求
+cmake_minimum_required(VERSION 3.15)
+
+# 项目信息
+project(MiniRayTracer C)
+
+# 设置C标准
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# 项目版本号
+set(MINI_RAY_TRACER_VERSION_MAJOR 1)
+set(MINI_RAY_TRACER_VERSION_MINOR 0)
+set(MINI_RAY_TRACER_VERSION_PATCH 0)
+set(MINI_RAY_TRACER_VERSION 
+    ${MINI_RAY_TRACER_VERSION_MAJOR}.${MINI_RAY_TRACER_VERSION_MINOR}.${MINI_RAY_TRACER_VERSION_PATCH})
+
+# 构建类型配置
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+# 编译器特定选项
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    # GCC和Clang通用选项
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
+    
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -DNDEBUG")
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -DDEBUG")
+    elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g")
+    endif()
+    
+    # 特定编译器优化
+    if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffast-math -mtune=native")
+    elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffast-math -march=native")
+    endif()
+endif()
+
+# 设置输出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+# 包含子目录
+add_subdirectory(src)
+
+# 安装配置
+install(DIRECTORY include/ DESTINATION include)
+install(TARGETS raytracer DESTINATION bin)
+
+# CPack配置（用于生成安装包）
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_VERSION_MAJOR "${MINI_RAY_TRACER_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${MINI_RAY_TRACER_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${MINI_RAY_TRACER_VERSION_PATCH}")
+set(CPACK_PACKAGE_VENDOR "MINI_RAY_YFW")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mini Ray Tracer implemented in pure C")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+include(CPack)
